@@ -1,0 +1,44 @@
+# Security - Never commit these!
+# API Keys & Tokens
+*.key
+*.pem
+*.token
+.env
+.env.local
+
+# OpenClaw sensitive files
+openclaw.json
+config.json
+*.json.bak
+
+# Media files (can be large)
+media/
+*.mp3
+*.mp4
+*.wav
+*.jpg
+*.png
+*.gif
+
+# Session data
+sessions/
+*.session
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Large binary files
+*.pdf
+*.docx
+*.zip
+*.tar.gz
