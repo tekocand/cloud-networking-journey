@@ -98,6 +98,8 @@ If NACL didn't have outbound allow, the SSH session would hang after connection 
 
 ## Architecture After Hardening
 
+![Security Groups and NACL Configuration](day-02/images/photo_2026-03-11_17-19-15.jpg)
+
 ```
 Internet
     │

@@ -36,6 +36,9 @@
 ## What I Built
 
 ### Architecture
+
+![VPC Architecture - Two-tier with Public and Private Subnets](day-01/images/photo_2026-03-11_15-06-21.jpg)
+
 Two-tier VPC with public and private subnets:
 
 1. **VPC:** 10.0.0.0/16
