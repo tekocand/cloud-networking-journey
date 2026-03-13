@@ -1,10 +1,5 @@
 # Cloud Networking Journey
 
-> 24-week path to Cloud & Data Center Network Architect (Singapore market)
-
-**Started:** March 11, 2026  
-**Target:** September 2026  
-**Daily Commitment:** 2-3 hours
 
 ---
 

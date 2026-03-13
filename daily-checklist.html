@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Trading Checklist</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0b0d;
+            color: #e8eaed;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { margin-bottom: 8px; font-size: 1.5rem; }
+        .date { color: #9aa0a6; margin-bottom: 24px; }
+        
+        .section {
+            background: #111318;
+            border: 1px solid #2a2e38;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #2a2e38;
+        }
+        .checklist-item:last-child { border-bottom: none; }
+        
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #2a2e38;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .checkbox.checked {
+            background: #22c55e;
+            border-color: #22c55e;
+        }
+        .checkbox.checked::after {
+            content: "✓";
+            color: white;
+            font-size: 14px;
+        }
+        
+        .item-text { flex: 1; font-size: 0.95rem; }
+        .item-text.strikethrough { text-decoration: line-through; color: #9aa0a6; }
+        
+        .limits-box {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .limit-item {
+            background: #1a1d23;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .limit-label { font-size: 0.75rem; color: #9aa0a6; }
+        .limit-value { font-size: 1.1rem; font-weight: 600; margin-top: 4px; }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: #3b82f6;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .btn:hover { background: #2563eb; }
+        
+        .progress-bar {
+            height: 4px;
+            background: #1a1d23;
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #22c55e;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Daily Trading Checklist</h1>
+        <div class="date" id="currentDate"></div>
+        
+        <div class="section">
+            <div class="section-title">Pre-Market (08:00)</div>
+            <div class="checklist-item">
+                <div class="checkbox" onclick="toggle(this)"></div>
+                <div class="item-text">Slept 7+ hours</div>
+            </div>
+            <div class="checklist-item">
+                <div class="checkbox" onclick="toggle(this)"></div>
+                <div class="item-text">Daily loss limit NOT hit this week ($1,250)</div>
+            </div>
+            <div class="checklist-item">
+                <div class="checkbox" onclick="toggle(this)"></div>
+                <div class="item-text">Reviewed daily trend (market structure)</div>
+            </div>
+            <div class="checklist-item">
+                <div class="checkbox" onclick="toggle(this)"></div>
+                <div class="item-text">Identified H4 demand/supply zones</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Trade Entry (Only 1 per day)</div>
+            <div class="checklist-item">
+                <div class="checkbox" onclick="toggle(this)"></div>
+                <div class="item-text">Daily trend confirmed (Bullish/Bearish)</div>
+            </div>
+            <div class="checklist-item">
+                <div class="checkbox" onclick="toggle(this)"></div>
+                <div class="item-text">H4 demand/supply zone + wick present</div>
+            </div>
+            <div class="checklist-item">
+                <div class="checkbox" onclick="toggle(this)"></div>
+                <div class="item-text">M15 engulfing bar confirmation</div>
+            </div>
+            <div class="checklist-item">
+                <div class="checkbox" onclick="toggle(this)"></div>
+                <div class="item-text">Position size ≤ $250 risk (use calculator)</div>
+            </div>
+            <div class="checklist-item">
+                <div class="checkbox" onclick="toggle(this)"></div>
+                <div class="item-text">Stop and target orders placed BEFORE entry</div>
+            </div>
+            <div class="checklist-item">
+                <div class="checkbox" onclick="toggle(this)"></div>
+                <div class="item-text">NOT trading FOMO (calm and planned)</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Risk Limits</div>
+            <div class="limits-box">
+                <div class="limit-item">
+                    <div class="limit-label">Per Trade</div>
+                    <div class="limit-value">$250</div>
+                </div>
+                <div class="limit-item">
+                    <div class="limit-label">Daily</div>
+                    <div class="limit-value">$500</div>
+                </div>
+                <div class="limit-item">
+                    <div class="limit-label">Weekly</div>
+                    <div class="limit-value">$1,250</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Post-Trade / No Trade (12:00+)</div>
+            <div class="checklist-item">
+                <div class="checkbox" onclick="toggle(this)"></div>
+                <div class="item-text">No trade taken OR trade closed</div>
+            </div>
+            <div class="checklist-item">
+                <div class="checkbox" onclick="toggle(this)"></div>
+                <div class="item-text">Journal entry completed (emotions + lesson)</div>
+            </div>
+            <div class="checklist-item">
+                <div class="checkbox" onclick="toggle(this)"></div>
+                <div class="item-text">Charts closed, no more watching</div>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress" style="width: 0%"></div>
+        </div>
+        
+        <button class="btn" onclick="saveChecklist()">Save Today's Checklist</button>
+    </div>
+    
+    <script>
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+        
+        function toggle(el) {
+            el.classList.toggle('checked');
+            el.nextElementSibling.classList.toggle('strikethrough');
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            const total = document.querySelectorAll('.checkbox').length;
+            const checked = document.querySelectorAll('.checkbox.checked').length;
+            const percent = (checked / total) * 100;
+            document.getElementById('progress').style.width = percent + '%';
+        }
+        
+        function saveChecklist() {
+            const items = [];
+            document.querySelectorAll('.checklist-item').forEach(item => {
+                items.push({
+                    text: item.querySelector('.item-text').textContent,
+                    checked: item.querySelector('.checkbox').classList.contains('checked')
+                });
+            });
+            
+            const data = {
+                date: new Date().toISOString(),
+                items: items,
+                progress: document.getElementById('progress').style.width
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `checklist-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('Checklist saved!');
+        }
+    </script>
+</body>
+</html>

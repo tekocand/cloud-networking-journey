@@ -1,0 +1,4 @@
+Date,Pair,Direction,Entry,Stop,Target,RiskAmount,PositionSize,SetupType,H4Trend,H1Trend,M15Trigger,EmotionBefore(1-10),EmotionAfter(1-10),TookTrade,FOMO,FollowedPlan,Mistake,Lesson,PnL,RMultiple
+2025-02-26,SOL/USDT,Long,150.00,145.00,160.00,250,7500,SMC Reversal,Bullish,Bullish,Engulfing,4,6,Yes,No,Yes,None,Good patience,500,2.0
+2025-02-26,BTC/USDT,Short,52000,53000,50000,250,1250,SMC Reversal,Bearish,Bearish,WickRejection,7,3,Yes,Yes,No,Chased entry,Wait for zone,0,0.0
+2025-02-26,ETH/USDT,,,,,,,,Bullish,Bearish,,5,,No,No,,Missed setup,Price hit zone while asleep,,

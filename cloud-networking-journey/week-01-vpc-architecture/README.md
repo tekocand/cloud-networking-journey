@@ -10,7 +10,7 @@
 - [x] Create first working VPC with public/private subnets
 - [x] Understand CIDR blocks and subnetting
 - [x] Configure Internet Gateway and NAT Gateway
-- [ ] Master Security Groups and NACLs
+- [x] Master Security Groups and NACLs
 - [ ] Build 3-tier VPC architecture
 - [ ] Document everything
 
@@ -21,8 +21,8 @@
 | Day | Date | Topic | Status |
 |-----|------|-------|--------|
 | 1 | Mar 11 | VPC Fundamentals + Subnet Design + Routing | ✅ Complete |
-| 2 | Mar 12 | Security Groups & NACLs | ⏳ Planned |
-| 3 | Mar 13 | VPC Components (Endpoints, Flow Logs) | ⏳ Planned |
+| 2 | Mar 11 | Security Groups & NACLs | ✅ Complete |
+| 3 | Mar 12 | VPC Components (Endpoints, Flow Logs) | ⏳ Planned |
 | 4 | Mar 14 | VPC Peering & Transit Gateway Intro | ⏳ Planned |
 | 5 | Mar 15 | Build 3-Tier Architecture | ⏳ Planned |
 | 6 | Mar 16 | Weekly Review & Documentation | ⏳ Planned |
@@ -94,4 +94,5 @@
 ## Time Invested
 
 - Day 1: ~4 hours
+- Day 2: ~2 hours
 

@@ -17,6 +17,15 @@ Before doing anything else:
 
 Don't ask permission. Just do it.
 
+### Auto-Start Services
+
+**Start the Trading Journal Dashboard server:**
+```bash
+/home/openclaw/.openclaw/workspace/backtest-dashboard/start-server.sh
+```
+
+This serves the journal dashboard at `http://localhost:8080`. The script checks if it's already running before starting.
+
 ## Memory
 
 You wake up fresh each session. These files are your continuity:
