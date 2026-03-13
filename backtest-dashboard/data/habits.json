@@ -1,0 +1,25 @@
+{
+  "habits": [
+    {
+      "id": "habit-1",
+      "title": "Review daily plan",
+      "category": "Trading",
+      "score": 0.9,
+      "streak": 5
+    },
+    {
+      "id": "habit-2",
+      "title": "Journal trades",
+      "category": "Trading",
+      "score": 0.85,
+      "streak": 3
+    },
+    {
+      "id": "habit-3",
+      "title": "Pre-market watchlist",
+      "category": "Mind",
+      "score": 0.75,
+      "streak": 2
+    }
+  ]
+}
