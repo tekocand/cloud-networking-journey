@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Migrate Vision Board Images</title>
+    <style>
+        body { font-family: sans-serif; padding: 40px; background: #1a1d26; color: #e0e0e0; }
+        .container { max-width: 800px; margin: 0 auto; }
+        button { padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #2563eb; }
+        .status { margin-top: 20px; padding: 16px; border-radius: 8px; background: #2a2e38; }
+        .image-preview { display: inline-block; margin: 8px; width: 150px; height: 100px; object-fit: cover; border-radius: 8px; border: 2px solid #3b82f6; }
+        pre { background: #1a1d26; padding: 12px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Migrate Vision Board Images</h1>
+        <p>This page will check your browser's localStorage for old Vision Board images and migrate them to the server.</p>
+        
+        <button onclick="migrateVision()">Check & Migrate Vision Images</button>
+        
+        <div id="status" class="status" style="display: none;"></div>
+    </div>
+
+    <script>
+        const VISION_API_URL = 'http://192.168.81.128:8081/api/vision';
+        
+        async function migrateVision() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.style.display = 'block';
+            
+            // Check localStorage for old vision images
+            const saved = localStorage.getItem('visionImages');
+            
+            if (!saved) {
+                statusDiv.innerHTML = '<p>❌ No vision images found in localStorage.</p><p>It may have already been cleared or was never saved locally.</p>';
+                return;
+            }
+            
+            try {
+                const data = JSON.parse(saved);
+                
+                if (!Array.isArray(data) || data.length === 0) {
+                    statusDiv.innerHTML = '<p>❌ No vision images found in localStorage (empty array).</p>';
+                    return;
+                }
+                
+                statusDiv.innerHTML = '<p>✅ Found ' + data.length + ' vision image(s) in localStorage:</p>';
+                
+                // Show image previews
+                let previewsHtml = '<div style="margin: 16px 0;">';
+                data.forEach((img, i) => {
+                    previewsHtml += '<img src="' + img + '" class="image-preview" title="Image ' + (i+1) + '">';
+                });
+                previewsHtml += '</div>';
+                statusDiv.innerHTML += previewsHtml;
+                
+                // Save to server
+                const response = await fetch(VISION_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    statusDiv.innerHTML += '<p style="color: #22c55e; margin-top: 16px;">✅ Successfully migrated to server!</p><p>You can now close this page and go back to the dashboard.</p>';
+                    // Clear localStorage after successful migration
+                    localStorage.removeItem('visionImages');
+                } else {
+                    statusDiv.innerHTML += '<p style="color: #ef4444; margin-top: 16px;">❌ Failed to save to server. Please try again.</p>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<p style="color: #ef4444;">❌ Error: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "id": "[unique-id]",
+  "date": "YYYY-MM-DD",
+  "name": "Strategy Name",
+  "symbol": "BTCUSDT",
+  "timeframe": "4H",
+  "tags": ["trend", "ema"],
+  "thesis": "What are you testing and why?",
+  "trades": 0,
+  "winningTrades": 0,
+  "losingTrades": 0,
+  "pnl": 0,
+  "avgR": 0,
+  "maxDrawdown": 0,
+  "sharpe": 0,
+  "chartPath": "charts/[id].png",
+  "notes": "General observations",
+  "learnings": [
+    "Key insight 1",
+    "Key insight 2"
+  ]
+}

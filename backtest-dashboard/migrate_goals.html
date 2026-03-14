@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Migrate Goals Data</title>
+    <style>
+        body { font-family: sans-serif; padding: 40px; background: #1a1d26; color: #e0e0e0; }
+        .container { max-width: 600px; margin: 0 auto; }
+        button { padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #2563eb; }
+        .status { margin-top: 20px; padding: 16px; border-radius: 8px; background: #2a2e38; }
+        pre { background: #1a1d26; padding: 12px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Migrate Goals Data</h1>
+        <p>This page will check your browser's localStorage for old Goals data and migrate it to the server.</p>
+        
+        <button onclick="migrateGoals()">Check & Migrate Goals Data</button>
+        
+        <div id="status" class="status" style="display: none;"></div>
+    </div>
+
+    <script>
+        const GOALS_API_URL = 'http://192.168.81.128:8081/api/goals';
+        
+        async function migrateGoals() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.style.display = 'block';
+            
+            // Check localStorage for old goals data
+            const saved = localStorage.getItem('goals');
+            
+            if (!saved) {
+                statusDiv.innerHTML = '<p>❌ No goals data found in localStorage.</p><p>It may have already been cleared or was never saved locally.</p>';
+                return;
+            }
+            
+            try {
+                const data = JSON.parse(saved);
+                statusDiv.innerHTML = '<p>✅ Found goals data in localStorage:</p><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                
+                // Save to server
+                const response = await fetch(GOALS_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    statusDiv.innerHTML += '<p style="color: #22c55e; margin-top: 16px;">✅ Successfully migrated to server!</p><p>You can now close this page and go back to the dashboard.</p>';
+                    // Clear localStorage after successful migration
+                    localStorage.removeItem('goals');
+                } else {
+                    statusDiv.innerHTML += '<p style="color: #ef4444; margin-top: 16px;">❌ Failed to save to server. Please try again.</p>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<p style="color: #ef4444;">❌ Error: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>

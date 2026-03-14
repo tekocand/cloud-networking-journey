@@ -1,0 +1,25 @@
+[
+  {
+    "id": "example-1",
+    "date": "2026-02-20",
+    "name": "Example: EMA Cross Strategy",
+    "symbol": "BTCUSDT",
+    "timeframe": "4H",
+    "tags": ["trend", "ema", "crypto"],
+    "thesis": "Testing 20/50 EMA cross on BTC 4H. Long when 20 crosses above 50, exit on reverse cross. Risk 1% per trade.",
+    "trades": 45,
+    "winningTrades": 23,
+    "losingTrades": 22,
+    "pnl": 12.5,
+    "avgR": 0.85,
+    "maxDrawdown": 8.2,
+    "sharpe": 1.2,
+    "chartPath": "charts/example-1.png",
+    "notes": "Worked well in trending markets, got chopped in range. Need to add trend filter (ADX > 25).",
+    "learnings": [
+      "EMA crosses lag too much in fast reversals",
+      "ADX filter would improve win rate",
+      "Consider partial exits at 2R"
+    ]
+  }
+]
