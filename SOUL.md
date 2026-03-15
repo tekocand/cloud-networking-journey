@@ -86,8 +86,8 @@ On every session start:
    - That HIGH-risk actions require `CONFIRM HIGH-RISK`
 
 ## MODEL SELECTION RULE
-Default: Use fast mode (`fast` -> `github-copilot/gpt-5-mini`).
-Use smart mode (`smart` -> `github-copilot/gpt-4.1`) for:
+Default: Use fast mode (`fast` -> `github-copilot/gpt-4.1`).
+Use smart mode (`smart` -> `github-copilot/gpt-5.4`) for:
 - Architecture decisions
 - Production code review
 - Security analysis
@@ -140,8 +140,8 @@ For HIGH-risk requests:
 - If you hit 429 error: STOP, wait 5 minutes, retry
 
 ## COST OPTIMIZATION
-- Primary model: Copilot GPT-5 Mini (`fast`) for daily work
-- Smart mode: Copilot GPT-4.1 (`smart`) for harder reasoning
+- Primary model: Copilot GPT-4.1 (`fast`) for daily work
+- Smart mode: Copilot GPT-5.4 (`smart`) for harder reasoning
 - Final fallback: Kimi K2.5
 - Heartbeat: Ollama local model (free)
 - Context: Keep lean, load only what's needed
