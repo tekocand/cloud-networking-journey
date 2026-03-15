@@ -1,50 +1,193 @@
-# Day 03 — VPC Endpoints, Flow Logs & Network Manager
+# Day 3: VPC Endpoints, Flow Logs & Network Manager
 
-Short version (TL;DR)
-- Want private, reliable access to AWS services from inside a VPC without traffic leaving the AWS network? Use VPC Endpoints.
-- Interface endpoints = PrivateLink (ENIs + SGs). Gateway endpoints = free S3/DynamoDB routing.
-- Flow Logs = your traffic CCTV (metadata only). Network Manager = the control room for big networks.
+**Date:** March 15, 2026  
+**Time Spent:** ~3 hours  
+**Status:** ✅ Complete
 
-Why this mattered today
-I kept thinking: do I need a NAT gateway or endpoints? Turns out it's a cost + security + scale tradeoff. Endpoints keep traffic inside AWS (more secure), but each interface endpoint costs money. NAT is cheaper when you need many external services but sends traffic via the internet gateway/NAT path.
+---
 
-What I actually learned (so you don't repeat my mistakes)
+## What I Learned
 
-- Interface endpoints (AWS PrivateLink)
-  - Picture: an invisible, private door (ENI) in your subnet that connects directly to the AWS service.
-  - How it works: AWS creates an ENI in your subnet and Route53 resolves the service domain to that ENI IP. Traffic never sees a public IP.
-  - Security: protected by Security Groups. Treat it like any other ENI — lock inbound/outbound to only what you need.
-  - Cost: pay per endpoint + per-GB. If you need endpoints for many services (>~4), cost can exceed a NAT gateway — measure before you build.
-  - Ops tip: create endpoints per AZ and prefer same‑AZ endpoints from your instances to reduce cross‑AZ traffic and latency.
+### VPC Endpoints
 
-- Gateway endpoints (S3 & DynamoDB only)
-  - Free. Instead of DNS tricks, they add a prefix-list to your route table so S3/DynamoDB stays in the AWS network.
-  - Control access with VPC endpoint policies (Allow/Deny). Useful to lock down which buckets or actions a subnet can access.
+VPC Endpoints let resources inside a VPC access supported AWS services **without sending traffic through the public internet**.
 
-- Flow Logs
-  - What it is: a stream of metadata about who talked to whom (ENI source/destination, ports, bytes). No payload.
-  - When to enable: everywhere — VPC, subnet, or ENI level depending on how deep you want to inspect. Great for debugging, security hunting, and cost analysis.
-  - Quick use case: enable flow logs, try accessing S3 from an instance, then watch logs to confirm traffic path and whether it hit a VPCE.
+There are two main types:
 
-- Network Manager
-  - Central dashboard to visualize topology across regions/accounts. Helpful when your network stops being a nice little island and becomes an archipelago.
+| Type | Used For | How It Works | Cost | Security Control |
+|------|----------|--------------|------|------------------|
+| **Interface Endpoint** | Many AWS services via PrivateLink | Creates an ENI in my subnet with a private IP | Paid | Security Groups |
+| **Gateway Endpoint** | S3 and DynamoDB only | Adds route table entry using AWS-managed prefix list | Free | Endpoint Policy |
 
-Practical checklist (what I did / what you should do)
-1. Decide cost vs security: list required services. If <=3 services and strict private access needed → endpoints. If lots of services or heavy egress traffic → NAT + IGW might be cheaper.
-2. For Interface endpoints: create one per AZ, attach tight Security Groups, and document which instances should use which endpoint.
-3. For S3/DynamoDB: create gateway endpoints and use endpoint policies to restrict access to specific buckets or prefixes.
-4. Enable flow logs on the VPC or subnet, deliver to CloudWatch or S3, and verify traffic during tests.
+### Interface Endpoints (PrivateLink)
+- AWS creates an **Elastic Network Interface (ENI)** inside my subnet
+- Traffic stays inside the AWS network
+- Route 53 can resolve the service name to the private endpoint IP
+- Best for services that need private connectivity from private subnets
+- Costs money per endpoint + data processed
 
-Examples I tried
-- Test: created a gateway endpoint for S3, uploaded a small test object, then curl from private EC2. Verified the route table and confirmed the source IP was the ENI via flow logs.
-- Cost check: rough numbers — Interface endpoint ~ $8.9/mo + $0.01/GB; NAT gateway ~ $37/mo + data transfer. If you need 6 separate interface endpoints, NAT wins on cost.
+### Gateway Endpoints
+- Only available for **Amazon S3** and **DynamoDB**
+- Free to use
+- Instead of creating an ENI, AWS adds a route in the route table
+- That route points traffic for S3/DynamoDB to the gateway endpoint
+- Traffic stays within AWS instead of going out to public IP addresses
 
-Images
-- nat-gateway.png — compare NAT vs endpoints
-- igw.png — public vs private routing
-- sg-inbound.png — example Security Group for an interface endpoint
-- nacl-inbound.png — network-level context
+### Flow Logs
+- Flow Logs capture **metadata** about traffic, not the packet payload itself
+- Can be enabled for:
+  - VPC
+  - Subnet
+  - Network Interface
+- Useful for troubleshooting, visibility, and security analysis
 
-Notes & next actions
-- I’ll update the PR branch with this refinished note. Open the PR at: https://github.com/tekocand/cloud-networking-journey/pull/new/day-03-from-main to preview and merge.
-- Want different tone? More anecdotes? Say the vibe you want: concise + punchy (default), or narrative + examples (longer). I can rewrite once more.
+### Network Manager
+- Provides a dashboard and visualization for network topology
+- Useful for seeing connections and monitoring network resources in one place
+- I also learned I couldn't properly create/use Network Manager features without the required subscription/setup
+
+---
+
+## What I Built
+
+### VPC Endpoint Learning Setup
+
+![Internet Gateway](day-03/images/igw.png)
+
+Today was less about building a full new architecture and more about understanding **how private access works without NAT Gateway**.
+
+Main things I worked through:
+
+1. **Compared NAT Gateway vs VPC Endpoints**
+   - NAT Gateway allows private subnet instances to reach internet/AWS public services
+   - VPC Endpoints allow access to supported AWS services **without leaving AWS network**
+
+2. **Learned when to use Interface vs Gateway Endpoints**
+   - Interface Endpoint → broad service support, but costs money
+   - Gateway Endpoint → only S3 and DynamoDB, but free
+
+3. **Reviewed how routing and security change**
+   - Interface Endpoint uses ENI + Security Group
+   - Gateway Endpoint uses Route Table + Endpoint Policy
+
+---
+
+## Cost Comparison
+
+| Option | Approx Cost | Notes |
+|--------|-------------|-------|
+| Interface Endpoint | ~$8.9/month + $0.01/GB | Cost grows as more services are added |
+| NAT Gateway | ~$37/month + traffic | May be cheaper if many services are needed |
+| Gateway Endpoint | Free | Only for S3 and DynamoDB |
+
+### Key Cost Takeaway
+If I only need private access to **S3/DynamoDB**, Gateway Endpoint is the obvious choice.
+
+If I need several private AWS services, I should compare:
+- total Interface Endpoint cost
+vs
+- one NAT Gateway cost
+
+Once the number of endpoints grows, NAT Gateway may be more economical.
+
+---
+
+## Verification Tests
+
+| Test | What I Checked | Result |
+|------|----------------|--------|
+| Interface Endpoint concept | Uses ENI in subnet with private IP | ✅ Understood |
+| Gateway Endpoint concept | Adds route table entry for S3/DynamoDB | ✅ Understood |
+| Security model | Interface uses SG, Gateway uses Endpoint Policy | ✅ Confirmed |
+| Traffic path | Endpoint traffic stays inside AWS network | ✅ Confirmed |
+| Flow Logs purpose | Metadata only, no packet payload | ✅ Confirmed |
+| Network Manager usage | Requires more setup/subscription context | ⚠️ Limited access |
+
+---
+
+## Key Observations
+
+### What Worked
+- The difference between **Interface** and **Gateway** endpoints became much clearer
+- I finally understood that VPC Endpoints are basically a way to avoid using public internet for AWS service access
+- The cost comparison with NAT Gateway made the decision-making process more practical
+- Flow Logs made sense once I viewed them as **traffic metadata logs**, not packet capture
+
+### What I Learned the Hard Way
+- **Not every endpoint works the same way**: Interface and Gateway endpoints are very different under the hood
+- **Private access does not mean free**: Interface Endpoints add recurring cost
+- **Security responsibility changes**:
+  - Interface Endpoint → Security Groups
+  - Gateway Endpoint → Endpoint Policies
+- **Network Manager isn't just plug-and-play**: I hit limitations trying to create/use it without the required subscription/setup
+
+### What Clicked
+- **Gateway Endpoint = route table trick for S3/DynamoDB**
+- **Interface Endpoint = private ENI created inside subnet**
+- **Flow Logs = network metadata journal**
+- **NAT Gateway vs Endpoint = cost + security tradeoff**
+
+---
+
+## Architecture View
+
+![NAT Gateway](day-03/images/nat-gateway.png)
+
+```
+Private EC2
+   │
+   ├── Option 1: NAT Gateway ──> Internet / Public AWS service endpoint
+   │
+   └── Option 2: VPC Endpoint ──> AWS service through private AWS network
+```
+
+### Security Context
+
+![Security Group Example](day-03/images/sg-inbound.png)
+
+For Interface Endpoints:
+- Access is controlled by **Security Groups**
+- Treat the endpoint ENI like another network interface inside the subnet
+
+![NACL Example](day-03/images/nacl-inbound.png)
+
+For Gateway Endpoints:
+- Access is controlled with **Endpoint Policies**
+- Route tables determine whether traffic goes through the endpoint
+
+---
+
+## What Was Confusing
+
+- At first I thought all VPC Endpoints worked like simple route changes — wrong
+- Interface Endpoint using ENI + DNS resolution took a bit longer to click
+- The cost difference was not obvious until I compared multiple endpoints against one NAT Gateway
+- Network Manager sounded simple in theory, but in practice there were extra requirements/limitations
+
+---
+
+## Questions for Tomorrow
+
+- How do VPC Peering and Transit Gateway compare for connecting multiple VPCs?
+- When should I use PrivateLink vs Transit Gateway?
+- How do Flow Logs help in real troubleshooting scenarios?
+
+---
+
+## Resources Used
+
+- AWS VPC Endpoints Documentation: https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html
+- AWS Gateway Endpoints: https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html
+- AWS Flow Logs: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html
+- AWS Network Manager: https://docs.aws.amazon.com/network-manager/latest/tgwhat-is-network-manager.html
+
+---
+
+## Tomorrow's Plan
+
+**Day 4: VPC Connectivity Options**
+- VPC Peering
+- Transit Gateway
+- Site-to-Site VPN
+- Direct Connect overview
+- Compare which connectivity option fits which scenario
