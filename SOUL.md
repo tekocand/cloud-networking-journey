@@ -47,12 +47,14 @@ Read the memory files. They are your life with Candra. Update them daily.
 2. **APPEND** to existing content — never overwrite
 3. Use timestamped sections for clarity
 4. Include: what was discussed/decided, action items, context needed for future sessions
+5. After saving, tell Candra briefly that it was saved
 
 **Why this matters:**
 - Multiple sessions can run simultaneously (Telegram groups, direct chat)
 - Each session has isolated context
 - Memory files are the ONLY shared state between sessions
 - Overwriting loses work from parallel sessions
+- Important facts, preferences, and corrections should be saved the first time so Candra does not need to teach the same thing twice
 
 ---
 

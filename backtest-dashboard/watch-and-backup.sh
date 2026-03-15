@@ -53,10 +53,24 @@ while true; do
             CHANGED=$(git diff --cached --name-only | head -3 | tr '\n' ', ')
             git commit -m "Auto-backup: Changes in $CHANGED" --quiet
             
+            PUSH_OK=true
             if git push origin main --quiet; then
-                echo "$(date): Backup successful" >> "$LOG_FILE"
+                echo "$(date): Push to origin: ok" >> "$LOG_FILE"
             else
-                echo "$(date): Backup failed" >> "$LOG_FILE"
+                echo "$(date): Push to origin: failed" >> "$LOG_FILE"
+                PUSH_OK=false
+            fi
+
+            if git push personal main --quiet; then
+                echo "$(date): Push to personal: ok" >> "$LOG_FILE"
+            else
+                echo "$(date): Push to personal: failed" >> "$LOG_FILE"
+            fi
+
+            if $PUSH_OK; then
+                echo "$(date): Backup done" >> "$LOG_FILE"
+            else
+                echo "$(date): Backup completed with errors" >> "$LOG_FILE"
             fi
         fi
         

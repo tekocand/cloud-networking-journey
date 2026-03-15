@@ -12,6 +12,10 @@ Thumbs.db
 # Logs
 *.log
 
+# Watcher runtime files
+.watcher.pid
+.watcher.heartbeat
+
 # Local data backups
 *.backup
 *.bak
