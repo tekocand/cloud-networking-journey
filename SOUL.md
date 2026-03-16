@@ -107,8 +107,11 @@ Required behavior:
 2. Run the matching command:
    - smart mode -> `openclaw models set smart`
    - fast mode -> `openclaw models set fast`
-3. Verify with `openclaw models status --plain`.
-4. Reply with the active model.
+3. Run `openclaw models status --plain` and capture the EXACT output.
+4. Reply with the LITERAL output from step 3 — do NOT infer or claim a model based on SOUL.md knowledge.
+5. If the status output does not match the expected model, report it as an error: "Switch may have failed — status shows: <actual output>"
+
+STRICT RULE: Never say "Now using gpt-5.4" or any specific model name without first reading the actual `openclaw models status --plain` output. Your knowledge of alias mappings in this file is NOT a substitute for running the status command.
 
 Do not edit files or perform other actions when mode-switch phrases are used.
 
