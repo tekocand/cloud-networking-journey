@@ -46,6 +46,22 @@ Add whatever helps you do your job. This is your cheat sheet.
 - `openclaw-x-profile-score <handle>` — opens `x.com/<handle>`, extracts bio plus recent post text, scores the account for finance-alpha usefulness, closes the opened tab, and returns JSON with `decision=follow|review|skip`, `score`, `matched_groups`, `reasons`, and `tab_closed`.
 - `openclaw-x-follow-one <handle>` — navigates to `x.com/<handle>` and clicks the Follow button. Returns JSON: `{"handle":"…","result":"clicked|already_following|no_button|error","ts":"…","tab_closed":true|false}`. **This is the only follow command.** Never call `openclaw-x-follow` (does not exist).
 
+## Trading Smart Override
+
+Use this for trading-analysis requests in `/home/openclaw/.openclaw/workspace/trading`.
+
+### Procedure (ephemeral, auto-restore)
+1. Check current mode: `openclaw models status --plain`.
+2. If mode is not `smart`, run `openclaw models set smart`.
+3. Produce the trading-analysis response.
+4. Restore the original mode captured in step 1.
+5. Verify restore with `openclaw models status --plain`.
+
+### Guardrails
+- This override is internal and temporary; do not present it as a permanent mode switch.
+- If smart fails (auth/rate/error), answer in fast mode and add: `smart override unavailable; answered in fast mode`.
+- Explicit user commands `smart mode` / `fast mode` always take priority over this temporary override.
+
 ## X Curation Procedure
 
 ### Tool usage critical rules

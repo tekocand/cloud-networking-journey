@@ -17,6 +17,18 @@ Before doing anything else:
 
 Don't ask permission. Just do it.
 
+## Mandatory Reply Footer
+
+For every user-visible assistant reply, always end with one final model footer line in Markdown italics:
+- `*GPT-5.4*`
+- `*GPT-4.1*`
+- `*Kimi-K2.5*`
+
+Use the model that actually generated that reply.
+This footer requirement overrides brevity requests like "one line only" (content can be one line; footer is an additional final line).
+Before sending, validate the final line and append footer if missing.
+If a reply was sent without footer, immediately send a follow-up message containing only the missing footer line.
+
 ### Auto-Start Services
 
 **Start the Trading Journal Dashboard server:**
