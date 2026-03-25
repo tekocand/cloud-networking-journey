@@ -114,3 +114,27 @@ When creating the custom Route Tables in Lab 3, I accidentally had a different T
 - **Lesson:** Literal copy-paste trap. I also pinged the local sub-network IP (`10.0.11.194` TGW ENI) instead of the actual Database (`172.16.1.126`), which proved I copied the wrong private IP from the EC2 instance console. Look closely at exactly where the packets are being sent!
 
 ![Successful Cross-VPC Ping Tests](images/screenshot-successful-ping.png)
+
+---
+
+## 🔍 Deep Dive: Troubleshooting TGW Routing with VPC Flow Logs
+
+When Transit Gateway routing fails (pings drop), you MUST use AWS CloudWatch Logs Insights to prove exactly where the packet died.
+
+### How to Query the Flow Logs
+1. Go to **CloudWatch** > **Logs Insights**.
+2. Select your `vpc-flow-logs` log group from the dropdown.
+3. Paste the following query to track your exact EC2 instance's IP:
+```text
+fields @timestamp, srcAddr, dstAddr, action, logStatus
+| filter srcAddr="<APP_PRIVATE_IP>" or dstAddr="<APP_PRIVATE_IP>"
+| sort @timestamp desc
+| limit 50
+```
+4. Click **Run query**.
+
+### How to Read the Flow Log Output
+Flow logs give you the definitive "Smoking Gun" for network drops:
+- **`ACCEPT OK` but ping still times out:** The Security Groups allowed the packet to leave the App, but it got blackholed by an unsaved Route Table, dropped by a missing TGW propagation, or the Database's route table lacked a return route to send the response back.
+- **`REJECT OK`:** The packet was actively slapped down by a **Security Group** or **NACL**. If you see this, stop looking at Route Tables immediately. Go fix the Inbound/Outbound ICMP rules on the instances!
+- **`0 records matched`:** CloudWatch found absolutely zero traffic for that IP. You either literally copy-pasted `<YOUR_APP_PRIVATE_IP>` blindly into the query editor, or you actually pinged the wrong IP address entirely (like pinging the TGW ENI or public IP instead of the private DB IP).
